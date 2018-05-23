@@ -1,0 +1,1 @@
+This application is responsible to integrate the RestfulApplication to WareHouseApplication thruogh messaging
