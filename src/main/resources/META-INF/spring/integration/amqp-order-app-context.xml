@@ -12,13 +12,6 @@
 		password="guest" />
 		
 	<rabbit:admin connection-factory="amqpConnectionFactory"/>
-
-	<rabbit:listener-container
-		connection-factory="amqpConnectionFactory">
-		<rabbit:listener ref="orderListener" method="listen"
-			queue-names="customerOrder" />
-	</rabbit:listener-container>
-
-	<bean id="orderListener" class="edu.mum.integration.OrderListener" />
+	
 
 </beans>

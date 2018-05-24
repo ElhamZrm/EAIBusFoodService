@@ -12,7 +12,10 @@ public class OrderListener {
 	OrderGateway orderGateway;
 	
 	public void listen(Order order) {
-		orderGateway = (OrderGateway) context.getBean("order");
-		orderGateway.process(order);
+		System.out.println("WAREHOUSE - Message received: " );
+		System.out.println("Listening to order " + order.getName());
+		
+		//orderGateway = (OrderGateway) context.getBean("order");
+		//orderGateway.process(order);
 	}
 }

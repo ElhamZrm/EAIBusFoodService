@@ -2,27 +2,38 @@
 <beans:beans xmlns="http://www.springframework.org/schema/integration"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:beans="http://www.springframework.org/schema/beans"
-    xmlns:amqp="http://www.springframework.org/schema/integration/amqp"
+	xmlns:amqp="http://www.springframework.org/schema/integration/amqp"
 	xmlns:jms="http://www.springframework.org/schema/integration/jms"
- 	xmlns:stream="http://www.springframework.org/schema/integration/stream"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans
-			http://www.springframework.org/schema/beans/spring-beans.xsd
-			http://www.springframework.org/schema/context
-			http://www.springframework.org/schema/context/spring-context.xsd
-			http://www.springframework.org/schema/integration
-			http://www.springframework.org/schema/integration/spring-integration.xsd
- 			http://www.springframework.org/schema/integration/amqp 
- 				http://www.springframework.org/schema/integration/amqp/spring-integration-amqp.xsd
-     		http://www.springframework.org/schema/integration/jms
-			http://www.springframework.org/schema/integration/jms/spring-integration-jms.xsd
-			http://www.springframework.org/schema/integration/stream
-			http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd">
+	xmlns:stream="http://www.springframework.org/schema/integration/stream"
+	xmlns:rabbit="http://www.springframework.org/schema/rabbit"
+	xsi:schemaLocation="http://www.springframework.org/schema/jms http://www.springframework.org/schema/jms/spring-jms-4.2.xsd
+		http://www.springframework.org/schema/integration/stream http://www.springframework.org/schema/integration/stream/spring-integration-stream.xsd
+		http://www.springframework.org/schema/integration/amqp http://www.springframework.org/schema/integration/amqp/spring-integration-amqp.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+		http://www.springframework.org/schema/integration/jms http://www.springframework.org/schema/integration/jms/spring-integration-jms.xsd
+		http://www.springframework.org/schema/rabbit http://www.springframework.org/schema/rabbit/spring-rabbit-1.5.xsd
+		http://www.springframework.org/schema/integration http://www.springframework.org/schema/integration/spring-integration.xsd">
  	
- 	<gateway service-interface="edu.mum.integration.OrderGateway" id="order" 
- 			default-request-channel="processOrder"/>
+ 	<amqp:inbound-channel-adapter channel= "processOrder"
+ 		queue-names="item_queue" connection-factory="amqpConnectionFactory" />
+
+	<!--<beans:bean id="orderListener" class="edu.mum.integration.OrderListener" />-->
  			
  	<channel id ="processOrder" />
  	
- 	<jms:outbound-channel-adapter id="jmsOutOrder" channel="processOrder" destination="warehouseQueue" />
+ 	<channel id ="outputProcess" />
+ 	
+ 	<transformer input-channel="processOrder" output-channel="outputProcess" id="transform_message" ref="orderTransformer"/>
+ 	<beans:bean id="orderTransformer" class="edu.mum.integration.OrderTransformerImpl" />
+ 	
+ 	<jms:outbound-channel-adapter id="jmsOutOrder" channel="outputProcess" destination="warehouseQueue" />
  
+ 	<rabbit:connection-factory
+		id="amqpConnectionFactory" host="localhost" username="guest"
+		password="guest" />
+		
+	<rabbit:admin connection-factory="amqpConnectionFactory"/>
+	
+	
  </beans:beans>
