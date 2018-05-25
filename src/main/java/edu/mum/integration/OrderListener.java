@@ -9,7 +9,7 @@ public class OrderListener {
 	@Autowired 
 	private ApplicationContext context;
 	
-	OrderGateway orderGateway;
+	//OrderGateway orderGateway;
 	
 	public void listen(Order order) {
 		System.out.println("WAREHOUSE - Message received: " );

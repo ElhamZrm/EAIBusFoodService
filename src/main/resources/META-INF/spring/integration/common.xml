@@ -21,10 +21,7 @@
 	<context:annotation-config />
 
 	<context:component-scan base-package="edu.mum" />
-	<int:service-activator
-		input-channel="processOrder" ref="testService" method="serviceMethod" />
-	<bean id="testService" class="edu.mum.integration.TestService" />
-
+	
 	<int-amqp:inbound-channel-adapter
 		channel="processOrder" queue-names="customerOrder"
 		connection-factory="amqpConnectionFactory" />
